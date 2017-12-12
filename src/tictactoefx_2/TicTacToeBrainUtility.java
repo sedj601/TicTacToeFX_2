@@ -7,6 +7,7 @@ package tictactoefx_2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,42 +74,47 @@ public class TicTacToeBrainUtility
         Arrays.sort(splitString);
         System.out.println(Arrays.toString(splitString));
 
-        Map<String, Integer> map = new HashMap();
-
-        for (int i = 1; i <= 9; i++)
+        System.out.println(splitString.length + "  length");
+        if(splitString.length > 0 && splitString[0].length() > 0)
         {
-            for (String tempString : splitString)
+            Map<String, Integer> map = new HashMap();
+
+            for (int i = 1; i <= 9; i++)
             {
-                //System.out.println("tempString: " + tempString + "   " + tempString.charAt(0) + ":" + i);
-                if (Character.isDigit(tempString.charAt(0)) && i == Integer.parseInt(tempString))
+                for (String tempString : splitString)
                 {
-                    if (map.containsKey(Integer.toString(i)))
+                    if (Character.isDigit(tempString.charAt(0)) && i == Integer.parseInt(tempString))
                     {
-                        int count = map.get(Integer.toString(i));
-                        map.put(Integer.toString(i), count + 1);
-                    }
-                    else
-                    {
-                        map.put(Integer.toString(i), 1);
-                    }
+                        if (map.containsKey(Integer.toString(i)))
+                        {
+                            int count = map.get(Integer.toString(i));
+                            map.put(Integer.toString(i), count + 1);
+                        }
+                        else
+                        {
+                            map.put(Integer.toString(i), 1);
+                        }
 
-                    System.out.println("found: " + Integer.toString(i) + " " + map.get(Integer.toString(i)));
+                        System.out.println("found: " + Integer.toString(i) + " " + map.get(Integer.toString(i)));
 
+                    }
                 }
             }
-        }
 
-        System.out.println("map: " + Arrays.toString(map.values().toArray()));
-        List<String> repeatedNumbers = new ArrayList();
-        for (Map.Entry<String, Integer> entry : map.entrySet())
-        {
-            if (entry.getValue() > 1)
+            System.out.println("map: " + Arrays.toString(map.values().toArray()));
+            List<String> repeatedNumbers = new ArrayList();
+            for (Map.Entry<String, Integer> entry : map.entrySet())
             {
-                repeatedNumbers.add(entry.getKey());
+                if (entry.getValue() > 1)
+                {
+                    repeatedNumbers.add(entry.getKey());
+                }
             }
-        }
 
-        return repeatedNumbers;
+            return repeatedNumbers;
+        }
+        
+        return tempList;
     }
 
     public static List<String> opponentCanFork(List<String> triples, char c)
@@ -125,10 +131,12 @@ public class TicTacToeBrainUtility
                 {
                     if (triple.matches("\\dxx") || triple.matches("x\\dx") || triple.matches("xx\\d"))
                     {
+                        System.out.print("I can win: " + triple + " - ");
                         for (int i = 0; i < triple.length(); i++)
                         {
                             if (Character.isDigit(triple.charAt(i)))
                             {
+                                System.out.println("winning qrid: " + triple.charAt(i));
                                 return Integer.parseInt(Character.toString(triple.charAt(i)));
                             }
                         }
@@ -139,10 +147,12 @@ public class TicTacToeBrainUtility
                 {
                     if (triple.matches("\\doo") || triple.matches("o\\do") || triple.matches("oo\\d"))
                     {
+                        System.out.print("opp can win: " + triple + " - ");
                         for (int i = 0; i < triple.length(); i++)
                         {
                             if (Character.isDigit(triple.charAt(i)))
                             {
+                                System.out.println("winning qrid: " + triple.charAt(i));
                                 return Integer.parseInt(Character.toString(triple.charAt(i)));
                             }
                         }
@@ -191,5 +201,32 @@ public class TicTacToeBrainUtility
         }
 
         return tempTriples;
+    }
+    
+    public static int playCenter()
+    {
+        return 5;
+    }
+    
+    public static int playCorner(String currentState)
+    {
+        Integer[] cornerNums = {1, 3, 7, 9};
+        List<Integer> list = Arrays.asList(cornerNums);
+        Collections.shuffle(list);
+        
+        for(Integer num : list)
+        {
+            if(currentSquareOpen(Integer.toString(num), currentState))
+            {
+                return num;
+            }
+        }
+        
+        return -1;
+    }
+    
+    public static boolean currentSquareOpen(String location, String currentState)
+    {
+        return currentState.contains(location);
     }
 }
